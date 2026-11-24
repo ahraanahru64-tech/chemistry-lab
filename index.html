@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chemistry Lab A-Z | Virtual Science Laboratory</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#071426;color:#f2f7ff;font-family:Arial,sans-serif}
+header{padding:25px;background:linear-gradient(120deg,#102d55,#522d81);text-align:center}
+header h1{margin:0;font-size:32px}
+header p{color:#d4e5ff}
+nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;background:#0d2037;padding:12px;position:sticky;top:0;z-index:5}
+button{cursor:pointer;background:#214b72;color:white;border:0;border-radius:8px;padding:11px 15px;font-size:14px}
+button:hover{background:#3979aa}
+main{max-width:1150px;margin:auto;padding:20px}
+.page{display:none}
+.page.active{display:block}
+.hero{background:linear-gradient(120deg,#174c70,#432c75);padding:35px;border-radius:18px;margin-bottom:25px}
+.hero h2{font-size:35px;margin:0}
+.card{background:#10263e;border:1px solid #294665;padding:18px;border-radius:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.card h3{color:#67d4ff}
+input,select{width:100%;padding:13px;border:1px solid #426184;background:#0b1b2d;color:white;border-radius:8px;margin:12px 0}
+.element-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:5px}
+.element{padding:6px 2px;background:#183b59;border:1px solid #315c7e;overflow:hidden}
+.element strong{display:block;font-size:18px}
+.element small{font-size:9px}
+.info{background:#15344c;padding:15px;border-radius:10px;margin-top:15px}
+.stage{background:radial-gradient(circle,#244a69,#09182a);padding:25px;text-align:center;border-radius:15px;margin:15px 0}
+.beaker{height:110px;width:90px;border:4px solid white;border-top:0;border-radius:0 0 20px 20px;margin:15px auto;display:flex;align-items:end;overflow:hidden}
+.liquid{width:100%;height:50%;background:#38baff;transition:.5s}
+footer{text-align:center;padding:25px;background:#0d2037;color:#a9c5dc;margin-top:35px}
+@media(max-width:600px){.element-grid{grid-template-columns:repeat(5,1fr)}.hero h2{font-size:27px}}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🧪 Chemistry Lab A–Z</h1>
+<p>Your Interactive Virtual Chemistry Laboratory</p>
+</header>
+
+<nav>
+<button onclick="page('home')">Home</button>
+<button onclick="page('library')">Chemicals A–Z</button>
+<button onclick="page('periodic')">Periodic Table</button>
+<button onclick="page('lab')">Virtual Lab</button>
+<button onclick="page('reactions')">Reactions</button>
+<button onclick="page('quiz')">Quiz</button>
+<button onclick="page('safety')">Safety</button>
+</nav>
+
+<main>
+
+<section id="home" class="page active">
+<div class="hero">
+<h2>Welcome to Chemistry Lab!</h2>
+<p>Explore chemicals, atoms, molecules, elements and reactions through interactive educational simulations.</p>
+<button onclick="page('lab')">Enter Virtual Laboratory →</button>
+</div>
+<h2>Explore Your Laboratory</h2>
+<div class="grid">
+<div class="card"><h3>🧴 Chemical Library</h3><p>Explore chemical names, formulas and properties from A to Z.</p><button onclick="page('library')">Explore</button></div>
+<div class="card"><h3>⚛️ Periodic Table</h3><p>Discover all 118 elements.</p><button onclick="page('periodic')">Explore</button></div>
+<div class="card"><h3>🔬 Virtual Experiments</h3><p>Learn through computer-based experiments.</p><button onclick="page('lab')">Explore</button></div>
+<div class="card"><h3>⚗️ Reaction Center</h3><p>Understand chemical equations and reactions.</p><button onclick="page('reactions')">Explore</button></div>
+</div>
+</section>
+
+<section id="library" class="page">
+<h2>🧴 Chemical Library A–Z</h2>
+<p>Search chemicals by name, formula or category.</p>
+<input id="search" placeholder="Search chemicals..." oninput="renderChemicals()">
+<div class="grid" id="chemicalList"></div>
+</section>
+
+<section id="periodic" class="page">
+<h2>⚛️ Interactive Periodic Table</h2>
+<input id="elementSearch" placeholder="Search element..." oninput="renderElements()">
+<div class="element-grid" id="elements"></div>
+<div class="info" id="elementInfo">Select an element to see its information.</div>
+</section>
+
+<section id="lab" class="page">
+<h2>🔬 Virtual Chemistry Laboratory</h2>
+<p>These are educational screen-based simulations, not instructions for physical experiments.</p>
+<select id="experiment" onchange="resetLab()">
+<option value="ph">Virtual pH Indicator</option>
+<option value="density">Density Comparison</option>
+<option value="matter">States of Matter</option>
+<option value="reaction">Reaction Observation</option>
+</select>
+<div class="stage">
+<div style="font-size:45px">🧪</div>
+<h3 id="labTitle">Virtual pH Indicator</h3>
+<p id="labDescription">Explore acidic, neutral and alkaline samples.</p>
+<div class="beaker"><div class="liquid" id="liquid"></div></div>
+<p id="labResult">Choose an option below.</p>
+</div>
+<div class="grid" id="labButtons"></div>
+</section>
+
+<section id="reactions" class="page">
+<h2>⚗️ Chemical Reaction Center</h2>
+<div class="grid" id="reactionList"></div>
+<h2>Types of Chemical Reactions</h2>
+<div class="grid">
+<div class="card"><h3>Combination</h3><p>A + B → AB</p><p>Two substances form one product.</p></div>
+<div class="card"><h3>Decomposition</h3><p>AB → A + B</p><p>A compound breaks down into simpler substances.</p></div>
+<div class="card"><h3>Displacement</h3><p>One element replaces another in a compound.</p></div>
+<div class="card"><h3>Double Displacement</h3><p>Two compounds exchange ions.</p></div>
+<div class="card"><h3>Combustion</h3><p>A substance reacts with an oxidizer, often oxygen.</p></div>
+<div class="card"><h3>Neutralization</h3><p>Acid + Base → Salt + Water (typical reaction).</p></div>
+</div>
+</section>
+
+<section id="quiz" class="page">
+<h2>🧠 Chemistry Quiz</h2>
+<div class="card">
+<h3 id="question"></h3>
+<div id="answers"></div>
+<div class="info" id="feedback" style="display:none"></div>
+<p id="score">Score: 0</p>
+<button onclick="nextQuestion()" id="next">Next Question</button>
+</div>
+</section>
+
+<section id="safety" class="page">
+<h2>🛡️ Laboratory Safety</h2>
+<div class="card">
+<h3>Important Rules</h3>
+<ul>
+<li>Never mix unknown chemicals.</li>
+<li>Never taste or directly smell laboratory chemicals.</li>
+<li>Never conduct hazardous chemical reactions at home.</li>
+<li>Physical laboratory work requires qualified supervision.</li>
+<li>Use appropriate protective equipment.</li>
+<li>Read chemical safety documentation before supervised laboratory work.</li>
+<li>This website provides virtual educational simulations only.</li>
+</ul>
+</div>
+</section>
+
+</main>
+
+<footer>
+<h3>🧪 Chemistry Lab A–Z</h3>
+<p>Learn • Explore • Discover</p>
+<p>Educational Virtual Science Laboratory</p>
+</footer>
+
+<script>
+const chemicals=[
+["Acetic Acid","CH3COOH","Organic Acid","An acid found in vinegar."],
+["Ammonia","NH3","Inorganic","An important nitrogen compound."],
+["Baking Soda","NaHCO3","Salt","Sodium bicarbonate."],
+["Benzene","C6H6","Organic","An aromatic hydrocarbon."],
+["Calcium Carbonate","CaCO3","Salt","Found in limestone and chalk."],
+["Carbon Dioxide","CO2","Gas","Important in photosynthesis."],
+["Copper Sulfate","CuSO4","Salt","A copper compound."],
+["Ethanol","C2H5OH","Organic","An alcohol and organic compound."],
+["Glucose","C6H12O6","Carbohydrate","An important simple sugar."],
+["Hydrochloric Acid","HCl","Acid","A strong inorganic acid."],
+["Hydrogen","H2","Element","The lightest element."],
+["Iodine","I2","Element","A halogen element."],
+["Iron","Fe","Metal","Used in steel production."],
+["Magnesium","Mg","Metal","A light metallic element."],
+["Methane","CH4","Organic","The simplest hydrocarbon."],
+["Nitrogen","N2","Gas","A major part of Earth's atmosphere."],
+["Oxygen","O2","Gas","Important for respiration."],
+["Phosphoric Acid","H3PO4","Acid","An inorganic acid."],
+["Potassium Chloride","KCl","Salt","An ionic compound."],
+["Quartz","SiO2","Mineral","A crystalline form of silicon dioxide."],
+["Sodium Chloride","NaCl","Salt","Common table salt."],
+["Sulfur","S","Element","A non-metal element."],
+["Water","H2O","Compound","Essential for life."],
+["Xenon","Xe","Noble Gas","A noble gas."],
+["Yttrium","Y","Metal","A transition metal."],
+["Zinc","Zn","Metal","Used in corrosion protection."]
+];
+
+function renderChemicals(){
+let q=document.getElementById("search").value.toLowerCase();
+let found=chemicals.filter(c=>c.join(" ").toLowerCase().includes(q));
+document.getElementById("chemicalList").innerHTML=found.map(c=>`
+<div class="card"><h3>${c[0]}</h3><h2>${c[1]}</h2>
+<span>${c[2]}</span><p>${c[3]}</p></div>`).join("")||"No results found.";
+}
+
+const raw=[
+["H","Hydrogen"],["He","Helium"],["Li","Lithium"],["Be","Beryllium"],["B","Boron"],["C","Carbon"],["N","Nitrogen"],["O","Oxygen"],["F","Fluorine"],["Ne","Neon"],
+["Na","Sodium"],["Mg","Magnesium"],["Al","Aluminium"],["Si","Silicon"],["P","Phosphorus"],["S","Sulfur"],["Cl","Chlorine"],["Ar","Argon"],["K","Potassium"],["Ca","Calcium"],
+["Sc","Scandium"],["Ti","Titanium"],["V","Vanadium"],["Cr","Chromium"],["Mn","Manganese"],["Fe","Iron"],["Co","Cobalt"],["Ni","Nickel"],["Cu","Copper"],["Zn","Zinc"],
+["Ga","Gallium"],["Ge","Germanium"],["As","Arsenic"],["Se","Selenium"],["Br","Bromine"],["Kr","Krypton"],["Rb","Rubidium"],["Sr","Strontium"],["Y","Yttrium"],["Zr","Zirconium"],
+["Nb","Niobium"],["Mo","Molybdenum"],["Tc","Technetium"],["Ru","Ruthenium"],["Rh","Rhodium"],["Pd","Palladium"],["Ag","Silver"],["Cd","Cadmium"],["In","Indium"],["Sn","Tin"],
+["Sb","Antimony"],["Te","Tellurium"],["I","Iodine"],["Xe","Xenon"],["Cs","Caesium"],["Ba","Barium"],["La","Lanthanum"],["Ce","Cerium"],["Pr","Praseodymium"],["Nd","Neodymium"],
+["Pm","Promethium"],["Sm","Samarium"],["Eu","Europium"],["Gd","Gadolinium"],["Tb","Terbium"],["Dy","Dysprosium"],["Ho","Holmium"],["Er","Erbium"],["Tm","Thulium"],["Yb","Ytterbium"],
+["Lu","Lutetium"],["Hf","Hafnium"],["Ta","Tantalum"],["W","Tungsten"],["Re","Rhenium"],["Os","Osmium"],["Ir","Iridium"],["Pt","Platinum"],["Au","Gold"],["Hg","Mercury"],
+["Tl","Thallium"],["Pb","Lead"],["Bi","Bismuth"],["Po","Polonium"],["At","Astatine"],["Rn","Radon"],["Fr","Francium"],["Ra","Radium"],["Ac","Actinium"],["Th","Thorium"],
+["Pa","Protactinium"],["U","Uranium"],["Np","Neptunium"],["Pu","Plutonium"],["Am","Americium"],["Cm","Curium"],["Bk","Berkelium"],["Cf","Californium"],["Es","Einsteinium"],["Fm","Fermium"],
+["Md","Mendelevium"],["No","Nobelium"],["Lr","Lawrencium"],["Rf","Rutherfordium"],["Db","Dubnium"],["Sg","Seaborgium"],["Bh","Bohrium"],["Hs","Hassium"],["Mt","Meitnerium"],["Ds","Darmstadtium"],
+["Rg","Roentgenium"],["Cn","Copernicium"],["Nh","Nihonium"],["Fl","Flerovium"],["Mc","Moscovium"],["Lv","Livermorium"],["Ts","Tennessine"],["Og","Oganesson"]
+];
+
+function renderElements(){
+let q=document.getElementById("elementSearch").value.toLowerCase();
+let list=raw.filter(e=>(e[0]+e[1]).toLowerCase().includes(q));
+document.getElementById("elements").innerHTML=list.map(e=>{
+let n=raw.indexOf(e)+1;
+return `<button class="element" onclick="elementInfo('${e[0]}','${e[1]}',${n})"><small>${n}</small><strong>${e[0]}</strong><small>${e[1]}</small></button>`;
+}).join("");
+}
+function elementInfo(s,n,num){
+document.getElementById("elementInfo").innerHTML=
+`<h2>${n} (${s})</h2><p>Atomic number: ${num}</p><p>Symbol: ${s}</p><p>Explore this element's properties and applications in chemistry.</p>`;
+}
+
+function page(id){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+window.scrollTo(0,0);
+if(id==="library")renderChemicals();
+if(id==="periodic")renderElements();
+if(id==="lab")resetLab();
+if(id==="reactions")renderReactions();
+if(id==="quiz")startQuiz();
+}
+
+function resetLab(){
+let type=document.getElementById("experiment").value;
+let data={
+ph:["Virtual pH Indicator","Explore acidic, neutral and alkaline samples.",["Acidic","Neutral","Alkaline"]],
+density:["Density Comparison","Compare imaginary material densities.",["Material A","Material B","Material C"]],
+matter:["States of Matter","Understand the particle model.",["Solid","Liquid","Gas"]],
+reaction:["Reaction Observation","Explore a conceptual reaction model.",["Start Simulation"]]
+}[type];
+document.getElementById("labTitle").textContent=data[0];
+document.getElementById("labDescription").textContent=data[1];
+document.getElementById("labResult").textContent="Choose an option below.";
+document.getElementById("labButtons").innerHTML=data[2].map((x,i)=>`<button onclick="simulate('${type}',${i})">${x}</button>`).join("");
+}
+function simulate(type,i){
+let output="",color="#38baff",height="50%";
+if(type==="ph"){
+let d=[["Acidic sample: pH below 7","#ff5475"],["Neutral sample: pH 7","#7bcefa"],["Alkaline sample: pH above 7","#9c80ff"]][i];
+output=d[0];color=d[1];
+}
+if(type==="density"){
+let d=[["Material A: higher relative density","70%"],["Material B: medium relative density","50%"],["Material C: lower relative density","30%"]][i];
+output=d[0];height=d[1];
+}
+if(type==="matter"){
+output=[
+"Solid: particles vibrate around fixed positions.",
+"Liquid: particles can move past one another.",
+"Gas: particles move freely and are widely spaced."
+][i];
+}
+if(type==="reaction"){
+output="Simulation complete: reactants are represented as forming products. Atoms are rearranged, not created or destroyed.";
+color="#42e0a1";
+}
+document.getElementById("labResult").textContent=output;
+document.getElementById("liquid").style.background=color;
+document.getElementById("liquid").style.height=height;
+}
+
+const reactionData=[
+["Water Formation","2H2 + O2 → 2H2O","Combination reaction."],
+["Carbon Dioxide Formation","C + O2 → CO2","Combination reaction."],
+["Neutralization","HCl + NaOH → NaCl + H2O","Acid-base reaction."],
+["Photosynthesis","6CO2 + 6H2O → C6H12O6 + 6O2","Overall photosynthesis equation."]
+];
+function renderReactions(){
+document.getElementById("reactionList").innerHTML=reactionData.map(r=>
+`<div class="card"><h3>${r[0]}</h3><h2>${r[1]}</h2><p>${r[2]}</p></div>`).join("");
+}
+
+const questions=[
+["What is the symbol of oxygen?",["O","Ox","Og","Oy"],0],
+["What is the formula of water?",["CO2","H2O","NaCl","O2"],1],
+["How many recognized elements are there?",["92","100","118","120"],2],
+["What is the pH of a neutral solution at 25°C?",["1","7","10","14"],1],
+["Which particle has a negative charge?",["Proton","Neutron","Electron","Nucleus"],2],
+["What is the symbol of sodium?",["S","So","Na","N"],2],
+["Which gas is used in photosynthesis?",["Carbon dioxide","Helium","Neon","Hydrogen"],0]
+];
+let qi=0,score=0,answered=false;
+function startQuiz(){qi=0;score=0;displayQuestion();}
+function displayQuestion(){
+answered=false;
+let q=questions[qi];
+document.getElementById("question").textContent="Question "+(qi+1)+": "+q[0];
+document.getElementById("answers").innerHTML=q[1].map((x,i)=>
+`<button style="display:block;width:100%;margin:8px 0;text-align:left" onclick="answer(${i})">${x}</button>`).join("");
+document.getElementById("feedback").style.display="none";
+document.getElementById("score").textContent="Score: "+score;
+document.getElementById("next").textContent=qi===questions.length-1?"Finish Quiz":"Next Question";
+}
+function answer(i){
+if(answered)return;
+answered=true;
+let correct=i===questions[qi][2];
+if(correct)score++;
+let f=document.getElementById("feedback");
+f.style.display="block";
+f.textContent=correct?"Correct! Well done.":"Incorrect. The correct answer is "+questions[qi][1][questions[qi][2]]+".";
+document.getElementById("score").textContent="Score: "+score;
+}
+function nextQuestion(){
+if(!answered){alert("Choose an answer first.");return;}
+if(qi===questions.length-1){
+document.getElementById("question").textContent="Quiz completed! Your score: "+score+"/"+questions.length;
+document.getElementById("answers").innerHTML="";
+document.getElementById("feedback").style.display="none";
+document.getElementById("next").textContent="Play Again";
+document.getElementById("next").onclick=startQuiz;
+}else{
+qi++;displayQuestion();
+}
+}
+
+renderChemicals();
+renderElements();
+resetLab();
+renderReactions();
+</script>
+</body>
+</html>
